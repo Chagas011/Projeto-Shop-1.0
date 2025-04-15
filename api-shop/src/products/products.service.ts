@@ -50,6 +50,15 @@ export class ProductsService {
     if (!product) {
       throw new NotFound(id);
     }
+    const productName = await this.prismaService.product.findFirst({
+      where: {
+        nome: updateProductDto.nome,
+      },
+    });
+
+    if (productName && productName.id !== id) {
+      throw new ProductAlreadyExistError(product.nome);
+    }
 
     return this.prismaService.product.update({
       where: {
